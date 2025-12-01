@@ -1,120 +1,112 @@
-// src/App.js  ← Paste everything from here
-
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Scale, Bird, HandMetal, Heart, BookOpen, Gavel,
-  ChevronDown, UserCheck, Globe, Moon, Sun, Download, Trophy, Sparkles, CheckCircle2
-} from 'lucide-react';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Scale, Bird, HandMetal, Heart, BookOpen, Gavel, ChevronDown, Moon, Sun, Download } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 const FundamentalRights = () => {
   const [expandedId, setExpandedId] = useState(null);
-  const [activeTab, setActiveTab] = useState('grid');
   const [darkMode, setDarkMode] = useState(false);
   const [completedCards, setCompletedCards] = useState(new Set());
-
-  useEffect(() => {
-    const saved = localStorage.getItem('fr-darkmode');
-    if (saved !== null) setDarkMode(JSON.parse(saved));
-  }, []);
-
-  useEffect(() => localStorage.setItem('fr-darkmode', JSON.stringify(darkMode)), [darkMode]);
 
   const toggleExpand = (id) => {
     const newId = expandedId === id ? null : id;
     setExpandedId(newId);
     if (newId && !completedCards.has(id)) {
-      setCompletedCards(prev => new Set(prev).add(id));
+      setCompletedCards(prev => new Set([...prev, id]));
       if (completedCards.size + 1 === 6) {
-        setTimeout(() => confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } }), 400);
+        confetti({ particleCount: 100, spread: 70 });
       }
     }
   };
 
-  const rights = [
-    { id: 1, title: "Right to Equality", arts: "14–18", icon: <Scale className="w-10 h-10"/>, color: "from-blue-500 to-cyan-500", mnemonic: "L-D-O-U-T" },
-    { id: 2, title: "Right to Freedom", arts: "19–22", icon: <Bird className="w-10 h-10"/>, color: "from-green-500 to-emerald-600", mnemonic: "SAMRAP" },
-    { id: 3, title: "Right Against Exploitation", arts: "23–24", icon: <HandMetal className="w-10 h-10"/>, color: "from-red-500 to-pink-600", mnemonic: "No Trafficking & Child Labour" },
-    { id: 4, title: "Freedom of Religion", arts: "25–28", icon: <Heart className="w-10 h-10"/>, color: "from-purple-500 to-indigo-600", mnemonic: "Conscience • Manage • Tax • Attend" },
-    { id: 5, title: "Cultural & Educational Rights", arts: "29–30", icon: <BookOpen className="w-10 h-10"/>, color: "from-amber-500 to-orange-600", mnemonic: "Minority Culture & Schools" },
-    { id: 6, title: "Constitutional Remedies", arts: "32", icon: <Gavel className="w-10 h-10"/>, color: "from-slate-700 to-slate-900", mnemonic: "Heart & Soul – Dr. Ambedkar" },
+  const rightsData = [
+    {
+      id: 1, title: "Right to Equality", articles: "14-18", icon: <Scale className="w-8 h-8" />, color: "bg-blue-500", mnemonic: "LDOUT", details: ["Art 14: Equality before Law", "Art 15: No Discrimination", "Art 16: Public Employment", "Art 17: Abolish Untouchability", "Art 18: No Titles"]
+    },
+    {
+      id: 2, title: "Right to Freedom", articles: "19-22", icon: <Bird className="w-8 h-8" />, color: "bg-green-500", mnemonic: "SAMRAP", details: ["Art 19: 6 Freedoms", "Art 20: Conviction Protection", "Art 21: Life & Liberty", "Art 21A: Education", "Art 22: No Arbitrary Arrest"]
+    },
+    {
+      id: 3, title: "Right Against Exploitation", articles: "23-24", icon: <HandMetal className="w-8 h-8" />, color: "bg-red-500", mnemonic: "Trafficking & Child Labor", details: ["Art 23: No Forced Labor", "Art 24: No Child Labor"]
+    },
+    {
+      id: 4, title: "Freedom of Religion", articles: "25-28", icon: <Heart className="w-8 h-8" />, color: "bg-purple-500", mnemonic: "Conscience, Manage, Tax, Attend", details: ["Art 25: Conscience & Practice", "Art 26: Manage Affairs", "Art 27: No Religious Tax", "Art 28: No Compulsory Instruction"]
+    },
+    {
+      id: 5, title: "Cultural & Educational Rights", articles: "29-30", icon: <BookOpen className="w-8 h-8" />, color: "bg-yellow-500", mnemonic: "Minority Protection", details: ["Art 29: Culture Preservation", "Art 30: Educational Institutions"]
+    },
+    {
+      id: 6, title: "Constitutional Remedies", articles: "32", icon: <Gavel className="w-8 h-8" />, color: "bg-gray-500", mnemonic: "Soul of Constitution", details: ["Art 32: Writs to SC", "Writs: Habeas, Mandamus, etc."]
+    }
   ];
 
   return (
-    <div className={`min-h-screen transition-colors duration-700 ${darkMode ? 'bg-gray-950 text-white' : 'bg-gradient-to-br from-indigo-50 to-purple-50'} p-4`}>
-      {/* Floating Buttons */}
-      <div className="fixed right-6 top-20 z-50 flex flex-col gap-3">
-        <button onClick={() => setDarkMode(!darkMode)} className="p-3 bg-white/90 dark:bg-gray-800 rounded-full shadow-2xl">
-          {darkMode ? <Sun className="w-6 h-6 text-yellow-400" /> : <Moon className="w-6 h-6" />}
+    <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'} p-4 transition-colors duration-300`}>
+      {/* Controls */}
+      <div className="fixed top-4 right-4 flex gap-2 z-10">
+        <button onClick={() => setDarkMode(!darkMode)} className="p-2 bg-gray-200 dark:bg-gray-700 rounded">
+          {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
         </button>
-        <button onClick={() => window.print()} className="p-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full shadow-2xl print:hidden">
-          <Download className="w-6 h-6" />
+        <button onClick={() => window.print()} className="p-2 bg-blue-500 text-white rounded">
+          <Download className="w-5 h-5" />
         </button>
       </div>
 
-      {/* Progress + Trophy */}
-      <div className="fixed top-0 left-0 w-full h-1 bg-gray-300 dark:bg-gray-700 z-40">
-        <motion.div className="h-full bg-gradient-to-r from-green-500 to-emerald-600" animate={{ width: `${(completedCards.size/6)*100}%` }} />
+      {/* Progress */}
+      <div className="fixed top-0 left-0 w-full h-1 bg-gray-300 dark:bg-gray-700">
+        <div className="h-full bg-blue-500" style={{ width: `${(completedCards.size / 6) * 100}%` }} />
       </div>
-      {completedCards.size === 6 && (
-        <motion.div initial={{y: -100}} animate={{y: 0}} className="fixed top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-500 to-pink-500 text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 z-50">
-          <Trophy className="w-6 h-6" /> <span className="font-bold">Mastered All 6 Rights!</span> <Sparkles className="w-5 h-5" />
-        </motion.div>
-      )}
 
-      <header className="text-center pt-20 pb-10 text-center">
-        <motion.h1 initial={{y: -40}} animate={{y: 0}} className="text-5xl md:text-7xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 mb-4">
-          Fundamental Rights
-        </motion.h1>
-        <p className="text-xl opacity-80">Part III • Articles 12–35 • UPSC CSE</p>
+      {/* Header */}
+      <header className="text-center py-8">
+        <h1 className="text-4xl font-bold text-blue-600 dark:text-blue-400 mb-2">Fundamental Rights</h1>
+        <p className="text-gray-600 dark:text-gray-300">UPSC CSE • Part III (Articles 12-35)</p>
       </header>
 
-      {/* Tabs */}
-      <div className="flex justify-center gap-4 mb-10">
-        {['grid', 'cheatsheet'].map(tab => (
-          <button key={tab} onClick={() => setActiveTab(tab)} className={`px-8 py-3 rounded-xl font-bold ${activeTab === tab ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white' : 'bg-white dark:bg-gray-800'}`}>
-            {tab === 'grid' ? 'Visual Journey' : 'Cheat Sheet'}
-          </button>
-        ))}
-      </div>
-
-      {/* Grid View */}
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4">
-        {rights.map((r, i) => (
+      {/* Cards Grid */}
+      <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {rightsData.map((right) => (
           <motion.div
-            key={r.id}
-            initial={{ opacity: 0, y: 50 }}
+            key={right.id}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            whileHover={{ y: -10 }}
-            onClick={() => toggleExpand(r.id)}
-            className="cursor-pointer"
+            transition={{ delay: right.id * 0.1 }}
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 cursor-pointer relative"
+            onClick={() => toggleExpand(right.id)}
+            whileHover={{ scale: 1.02 }}
           >
-            <div className={`relative rounded-3xl overflow-hidden shadow-2xl h-64 ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
-              <div className={`absolute inset-0 bg-gradient-to-br ${r.color} opacity-90`} />
-              <div className="relative p-8 h-full flex flex-col justify-between text-white">
-                <div className="flex justify-between items-start">
-                  <div className="p-4 bg-white/20 rounded-2xl backdrop-blur">{r.icon}</div>
-                  {completedCards.has(r.id) && <CheckCircle2 className="w-8 h-8 text-green-300" />}
-                </div>
-                <div>
-                  <h3 className="text-2xl font-bold">{r.title}</h3>
-                  <p className="text-sm opacity-80">Articles {r.arts}</p>
-                  <p className="mt-3 text-sm font-medium bg-black/30 px-3 py-1 rounded-full inline-block">{r.mnemonic}</p>
-                </div>
-                <motion.div animate={{ rotate: expandedId === r.id ? 180 : 0 }}>
-                  <ChevronDown className="w-6 h-6" />
-                </motion.div>
-              </div>
-            </div>
+            <div className={`p-3 rounded-full ${right.color} text-white mb-4`}>{right.icon}</div>
+            <h3 className="text-xl font-bold mb-2">{right.title}</h3>
+            <p className="text-sm text-gray-500 mb-2">{right.articles}</p>
+            <p className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded mb-4">{right.mnemonic}</p>
+            <ChevronDown className={`w-5 h-5 transition-transform ${expandedId === right.id ? 'rotate-180' : ''}`} />
+            
+            {expandedId === right.id && (
+              <motion.ul
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                className="mt-4 space-y-2 text-sm"
+              >
+                {right.details.map((detail, idx) => (
+                  <li key={idx} className="pl-4 border-l-2 border-gray-300 dark:border-gray-600">
+                    • {detail}
+                  </li>
+                ))}
+              </motion.ul>
+            )}
           </motion.div>
         ))}
       </div>
+
+      <footer className="text-center py-8 text-gray-500 text-sm mt-12">
+        Interactive UPSC Study Aid • Jai Hind!
+      </footer>
     </div>
   );
 };
 
-export default function App() {
+function App() {
   return <FundamentalRights />;
 }
+
+export default App;
